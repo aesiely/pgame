@@ -9,74 +9,65 @@ GAME RULES:
 
 */
 
-var scores, roundScore, activePlayer;
-
-// make a variable array that has both Players' scores
-scores = [0, 0];
-
-// make a variable for each round score
-roundScore = 0;
-
-// make a varibale that stores the active player
-activePlayer = 0;
 
 
-// select the dice value in the html using the id
-//document.querySelector('#current-' + activePlayer).textContent = dice;
-//
-// Hide dice
-document.querySelector('.dice').style.display = 'none';
 
-document.getElementById('score-0').textContent = '0';
-document.getElementById('score-1').textContent = '0';
-document.getElementById('current-0').textContent = '0';
-document.getElementById('current-1').textContent = '0';
+
+var scores, roundScore, activePlayer, gamePlaying;
+
+init();
 
 //select the roll dice button
 document.querySelector('.btn-roll').addEventListener('click', function() {
-    // 1. random number
-    var dice = Math.floor(Math.random() * 6) + 1;
+    
+    if(gamePlaying) {
+    
+        // 1. random number
+        var dice = Math.floor(Math.random() * 6) + 1;
 
-    // 2. Display the result
-    var diceDOM = document.querySelector('.dice');
-    diceDOM.style.display = 'block';
-    diceDOM.src = 'dice-' + dice +  '.png';
-    
-        
-    // 3. Update the round score IF the rolled number was NOT 1
-    if (dice !== 1) {
-        //Add Score
-        roundScore += dice;
-        document.querySelector('#current-' + activePlayer).textContent = roundScore;
-    } else { 
-        // next player
-        nextPlayer();       
+        // 2. Display the result
+        var diceDOM = document.querySelector('.dice');
+        diceDOM.style.display = 'block';
+        diceDOM.src = 'dice-' + dice +  '.png';
+
+
+        // 3. Update the round score IF the rolled number was NOT 1
+        if (dice !== 1) {
+            //Add Score
+            roundScore += dice;
+            document.querySelector('#current-' + activePlayer).textContent = roundScore;
+        } else { 
+            // next player
+            nextPlayer();       
+        }
     }
-    
 });
 
 document.querySelector('.btn-hold').addEventListener('click', function() {
-    //ADD Current score to Global Score
-    scores[activePlayer] += roundScore;
     
-    //Update the UI
-    document.querySelector('#score-' + activePlayer).textContent = scores[activePlayer];
-    
-    // Check if a player has won the game
-    if (scores[activePlayer] >= 100) {
-        document.querySelector('#name-' + activePlayer).textContent = 'Winner!';
-        
-        document.querySelector('.dice').style.display = 'none';
-        
-        document.querySelector('.player-' + activePlayer + '-panel').classList.add('winner');
-        
-        document.querySelector('.player-' + activePlayer + '-panel').classList.remove('active');
+    if (gamePlaying) {
+        //ADD Current score to Global Score
+        scores[activePlayer] += roundScore;
+
+        //Update the UI
+        document.querySelector('#score-' + activePlayer).textContent = scores[activePlayer];
+
+        // Check if a player has won the game
+        if (scores[activePlayer] >= 100) {
+            document.querySelector('#name-' + activePlayer).textContent = 'Winner!';
+
+            document.querySelector('.dice').style.display = 'none';
+
+            document.querySelector('.player-' + activePlayer + '-panel').classList.add('winner');
+
+            document.querySelector('.player-' + activePlayer + '-panel').classList.remove('active');
+            gamePlaying = false;
+        }
+        else {
+        //Next Player
+        nextPlayer();    
+        }
     }
-    else {
-    //Next Player
-    nextPlayer();    
-    }
-    
     
     
 });
@@ -95,8 +86,41 @@ function nextPlayer () {
     document.querySelector('.dice').style.display = 'none';
 };
 
+document.querySelector('.btn-new').addEventListener('click', init);
 
+
+function init() {
+    
+// make a variable array that has both Players' scores
+scores = [0, 0];
+
+// make a variable for each round score
+roundScore = 0;
+
+// make a varibale that stores the active player
+activePlayer = 0;
+    
+// Check the state of the game
+gamePlaying = true;
+
+document.querySelector('.dice').style.display = 'none';
+
+document.getElementById('score-0').textContent = '0';
+document.getElementById('score-1').textContent = '0';
+document.getElementById('current-0').textContent = '0';
+document.getElementById('current-1').textContent = '0';
+document.getElementById('name-0').textContent = 'Player 1';
+document.getElementById('name-1').textContent = 'Player 2';
+document.querySelector('.player-0-panel').classList.remove('winner');
+document.querySelector('.player-1-panel').classList.remove('winner');
+document.querySelector('.player-0-panel').classList.remove('active');
+document.querySelector('.player-1-panel').classList.remove('active');
+document.querySelector('.player-0-panel').classList.add('active');
+}
         
 //        document.querySelector('.player-0-panel').classList.remove('active');
 //        document.querySelector('.player-1-panel').classList.add('active');
 // 
+
+// select the dice value in the html using the id
+//document.querySelector('#current-' + activePlayer).textContent = dice;
